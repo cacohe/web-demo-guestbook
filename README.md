@@ -1,33 +1,46 @@
-# 云端留言板 (Guestbook)
+# 基于 Next.js 全栈框架的【云端留言板】
 
-基于 **Next.js App Router**、**Better Auth**、**Prisma** 与 **Neon PostgreSQL** 的 Serverless 全栈留言板 Demo。
+- **状态：** 功能冻结，只接受文档与保活修复；已实现功能见下一节
+- **Live：** [guestbook-cacohe.vercel.app](https://guestbook-cacohe.vercel.app)
+- **记录：** [学到了什么](docs/LEARNINGS.md) · [决策](docs/DECISIONS.md)
+- **License：** [MIT](LICENSE)
+
+
+## 已实现功能
+
+- 使用邮箱和密码注册账号，注册成功后直接进入留言板
+- 使用邮箱和密码登录；登录失败时在登录页看到错误提示
+- 登出后回到登录页，需要重新登录才能继续使用
+- 未登录访问留言板会跳转到登录页；已登录再打开登录/注册页会回到留言板
+- 登录后可以发表留言（1–200 字），空内容或超长会被拒绝并提示
+- 留言按时间倒序展示，可以看到每条留言的内容和作者
 
 ## 技术栈
 
-| 类别   | 技术                                                          |
-| ------ | ------------------------------------------------------------- |
-| 框架   | [Next.js](https://nextjs.org/) 16、React 19、TypeScript       |
-| 认证   | [Better Auth](https://www.better-auth.com/)（邮箱密码）       |
-| 数据库 | [Prisma](https://www.prisma.io/) + [Neon](https://neon.tech/) |
-| 校验   | [Zod](https://zod.dev/)                                       |
-| 样式   | Tailwind CSS 4                                                |
-| 质量   | ESLint、Prettier、Vitest                                      |
-| 部署   | [Vercel](https://vercel.com/)                                 |
-| 包管理 | pnpm 9                                                        |
+| 技术 | 在本项目中的应用 |
+| --- | --- |
+| [TypeScript](https://www.typescriptlang.org/) | 基础编程语言 |
+| [Next.js](https://nextjs.org/) 16 | 全栈框架 |
+| [React](https://react.dev/) 19 | 页面与表单的 UI 层 |
+| [Better Auth](https://www.better-auth.com/) | 用户认证（邮箱密码注册 / 登录 / 登出）|
+| [Prisma](https://www.prisma.io/) | ORM |
+| [Neon](https://neon.tech/) | Serverless PostgreSQL |
+| [Zod](https://zod.dev/) | 校验留言内容（1–200 字） |
+| Tailwind CSS 4 | 页面样式 |
+| ESLint、Prettier、Vitest | 代码规范、格式化与单元测试 |
+| [GitHub Actions](https://github.com/features/actions) | CI：格式检查、Lint、类型检查、测试与构建 |
+| [Vercel](https://vercel.com/) | 线上部署 |
+| pnpm 9 | 包管理 |
 
-## 功能特性
-
-- **Server Actions** 处理表单提交，无需手写 REST API
-- **Better Auth + Proxy** 实现登录保护与 Session 管理
-- **分层架构**（Domain → Service → Repository → Infrastructure）解耦业务与数据库/认证细节
-- **Zod** 校验留言内容（1–200 字）
-- **GitHub Actions** 自动执行格式检查、Lint、类型检查、测试与构建
 
 ## 项目结构
 
 ```
-guestbook/
+web-demo-guestbook/
 ├── .github/workflows/ci.yml       # CI 流水线
+├── docs/
+│   ├── LEARNINGS.md               # 做了 / 学到 / 验证了
+│   └── DECISIONS.md               # 架构与范围决策
 ├── prisma/
 │   └── schema.prisma              # 数据模型（User / Session / Message 等）
 ├── public/                        # 静态资源
@@ -48,6 +61,7 @@ guestbook/
 │   ├── services/                  # 业务逻辑层
 │   └── proxy.ts                   # 路由守卫（未登录跳转 /login）
 ├── .env.example                   # 环境变量模板
+├── LICENSE
 ├── package.json
 └── vitest.config.ts
 ```
@@ -62,60 +76,66 @@ guestbook/
 | 领域层   | `domain/`             | 实体、Zod Schema、领域错误         |
 | 基础设施 | `infrastructure/`     | Better Auth、Prisma 等具体技术实现 |
 
+
 ## 快速开始
 
-### 1. 安装依赖
+需要 **Node.js 20+** 和 **pnpm 9**（仓库锁定 `pnpm@9.15.9`）。若未安装 pnpm，可先执行 `corepack enable`。
+
+### 1. 克隆仓库并准备环境变量
+
+Prisma CLI 只读取项目根目录的 **`.env`**，不读取 `.env.local`。Next.js 也会加载 `.env`。统一使用 `.env`。
 
 ```bash
-git clone <your-repo-url>
-cd guestbook
-pnpm install
+git clone https://github.com/cacohe/web-demo-guestbook.git
+cd web-demo-guestbook
+cp .env.example .env
 ```
 
-`postinstall` 会自动执行 `prisma generate` 生成 Prisma Client。
+Windows PowerShell 可用 `Copy-Item .env.example .env`。
 
-### 2. 配置 Neon 数据库
+在 [Neon Console](https://console.neon.tech/) 创建项目，复制 **Direct** 连接串（主机名**不含** `-pooler`）。本项目 schema 只有 `DATABASE_URL`、同步方式是 `db push`，不要用 pooled 连接。
 
-1. 在 [Neon Console](https://console.neon.tech/) 创建项目
-2. 复制 **Connection string**（Serverless 环境建议使用 pooled 连接）
-
-### 3. 配置环境变量
-
-```bash
-cp .env.example .env.local
-```
-
-生成 Better Auth 密钥：
+生成 Better Auth 密钥（至少 32 位，CLI 输出可直接用）：
 
 ```bash
 pnpm dlx @better-auth/cli@latest secret
 ```
 
-填入 `.env.local`：
+写入 `.env`：
 
 ```env
 BETTER_AUTH_SECRET=生成的密钥
 BETTER_AUTH_URL=http://localhost:3000
-DATABASE_URL=postgresql://...@...neon.tech/neondb?sslmode=require
+DATABASE_URL=postgresql://...@ep-xxxx.region.aws.neon.tech/neondb?sslmode=require
 ```
 
-### 4. 同步数据库 Schema
+### 2. 安装依赖
+
+```bash
+pnpm install
+```
+
+`postinstall` 会执行 `prisma generate`。必须先有 `.env` 里的 `DATABASE_URL` 键（上一步复制模板即可），否则 generate 会因缺少环境变量失败。
+
+### 3. 同步数据库 Schema
 
 ```bash
 pnpm db:push
 ```
 
-将 `prisma/schema.prisma` 中的表结构推送到 Neon。
+将 `prisma/schema.prisma` 推送到 Neon。本项目没有 `prisma/migrations/`，不要用 `pnpm db:migrate`。
 
-### 5. 启动开发服务器
+### 4. 启动开发服务器
 
 ```bash
 pnpm dev
 ```
 
-访问 [http://localhost:3000](http://localhost:3000)。
+打开 [http://localhost:3000](http://localhost:3000)，应跳转到 `/login`。注册一个账号后进入留言板，发一条留言确认写入成功。
 
-> 若 IDE 报 `@prisma/client` 类型缺失，执行 `pnpm db:generate` 后重启 TypeScript 服务。
+`pnpm install` 与 `pnpm dev` 都会生成 Prisma Client。若 IDE 仍报 `@prisma/client` 类型缺失，重启 TypeScript 服务即可。
+
+若 3000 端口被占用，Next.js 可能改用 3001，此时把 `.env` 里的 `BETTER_AUTH_URL` 改成实际地址后重启。
 
 ## 常用命令
 
@@ -124,8 +144,8 @@ pnpm dev            # 开发（自动生成 Prisma Client）
 pnpm build          # 生产构建
 pnpm start          # 启动生产服务
 pnpm db:generate    # 生成 Prisma Client
-pnpm db:push        # 推送 schema 到数据库
-pnpm db:migrate     # 创建迁移（生产环境推荐）
+pnpm db:push        # 推送 schema 到数据库（本实验使用的方式）
+pnpm db:migrate     # Prisma migrate 入口；本仓库无迁移历史，留给未来 starter
 pnpm db:studio      # 打开 Prisma Studio
 pnpm lint           # ESLint 检查
 pnpm typecheck      # TypeScript 类型检查
@@ -159,13 +179,13 @@ CI 使用占位环境变量，无需真实数据库连接即可完成构建。
 1. 推送代码到 GitHub
 2. 在 Vercel 导入仓库
 3. 配置环境变量：
-   - `BETTER_AUTH_SECRET`
+   - `BETTER_AUTH_SECRET`（至少 32 位）
    - `BETTER_AUTH_URL`（生产域名，如 `https://your-app.vercel.app`）
-   - `DATABASE_URL`（Neon pooled 连接串）
+   - `DATABASE_URL`（Neon **Direct** 连接串，主机名不含 `-pooler`）
 4. 部署
 
-首次部署前，在本地或 CI 中对生产数据库执行 `pnpm db:push` 或 `pnpm db:migrate`。
+首次部署前，在本地对生产数据库执行 `pnpm db:push`（Prisma 读取的是本地 `.env`）。
 
 ## License
 
-MIT
+[MIT](LICENSE)
