@@ -1,6 +1,5 @@
 # 学到了什么
 
-
 ## 做了什么
 
 - 邮箱密码注册 / 登录 / 登出，Session 落到 Neon（经 Prisma + Better Auth）。
@@ -56,12 +55,12 @@ Better Auth 的 `signIn` / `signUp` 在 Server Action 里不会自动把 `Set-Co
 
 ## 验证了什么
 
-| 声明 | 怎么复查 |
-| --- | --- |
-| 未登录不能写留言 | `pnpm test` → MessageService「user is not authenticated」 |
-| 空内容 / 超 200 字拒绝 | `pnpm test` → `MessageSchema` 与 MessageService validation 用例 |
-| 登录失败回到登录页并带错误 | `pnpm test` → `src/app/actions/auth.test.ts` |
-| 静态质量门禁 | `pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build` 或看 GitHub Actions |
-| 端到端能发一条留言 | 打开 [Live Demo](https://guestbook-cacohe.vercel.app)，注册、登录、提交一条，刷新仍在 |
+| 声明                       | 怎么复查                                                                                          |
+| -------------------------- | ------------------------------------------------------------------------------------------------- |
+| 未登录不能写留言           | `pnpm test` → MessageService「user is not authenticated」                                         |
+| 空内容 / 超 200 字拒绝     | `pnpm test` → `MessageSchema` 与 MessageService validation 用例                                   |
+| 登录失败回到登录页并带错误 | `pnpm test` → `src/app/actions/auth.test.ts`                                                      |
+| 静态质量门禁               | `pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build` 或看 GitHub Actions |
+| 端到端能发一条留言         | 打开 [Live Demo](https://guestbook-cacohe.vercel.app)，注册、登录、提交一条，刷新仍在             |
 
 未验证（有意不做）：限流、安全响应头、Prisma migrate、仓储/E2E 测试、邮箱验证、OAuth。见 [DECISIONS.md](./DECISIONS.md)。

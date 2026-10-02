@@ -5,7 +5,6 @@
 - **记录：** [学到了什么](docs/LEARNINGS.md) · [决策](docs/DECISIONS.md)
 - **License：** [MIT](LICENSE)
 
-
 ## 已实现功能
 
 - 使用邮箱和密码注册账号，注册成功后直接进入留言板
@@ -17,21 +16,20 @@
 
 ## 技术栈
 
-| 技术 | 在本项目中的应用 |
-| --- | --- |
-| [TypeScript](https://www.typescriptlang.org/) | 基础编程语言 |
-| [Next.js](https://nextjs.org/) 16 | 全栈框架 |
-| [React](https://react.dev/) 19 | 页面与表单的 UI 层 |
-| [Better Auth](https://www.better-auth.com/) | 用户认证（邮箱密码注册 / 登录 / 登出）|
-| [Prisma](https://www.prisma.io/) | ORM |
-| [Neon](https://neon.tech/) | Serverless PostgreSQL |
-| [Zod](https://zod.dev/) | 校验留言内容（1–200 字） |
-| Tailwind CSS 4 | 页面样式 |
-| ESLint、Prettier、Vitest | 代码规范、格式化与单元测试 |
+| 技术                                                  | 在本项目中的应用                         |
+| ----------------------------------------------------- | ---------------------------------------- |
+| [TypeScript](https://www.typescriptlang.org/)         | 基础编程语言                             |
+| [Next.js](https://nextjs.org/) 16                     | 全栈框架                                 |
+| [React](https://react.dev/) 19                        | 页面与表单的 UI 层                       |
+| [Better Auth](https://www.better-auth.com/)           | 用户认证（邮箱密码注册 / 登录 / 登出）   |
+| [Prisma](https://www.prisma.io/)                      | ORM                                      |
+| [Neon](https://neon.tech/)                            | Serverless PostgreSQL                    |
+| [Zod](https://zod.dev/)                               | 校验留言内容（1–200 字）                 |
+| Tailwind CSS 4                                        | 页面样式                                 |
+| ESLint、Prettier、Vitest                              | 代码规范、格式化与单元测试               |
 | [GitHub Actions](https://github.com/features/actions) | CI：格式检查、Lint、类型检查、测试与构建 |
-| [Vercel](https://vercel.com/) | 线上部署 |
-| pnpm 9 | 包管理 |
-
+| [Vercel](https://vercel.com/)                         | 线上部署                                 |
+| pnpm 9                                                | 包管理                                   |
 
 ## 项目结构
 
@@ -75,7 +73,6 @@ web-demo-guestbook/
 | 接口层   | `repositories/`       | 定义数据访问契约，注入具体实现     |
 | 领域层   | `domain/`             | 实体、Zod Schema、领域错误         |
 | 基础设施 | `infrastructure/`     | Better Auth、Prisma 等具体技术实现 |
-
 
 ## 快速开始
 
