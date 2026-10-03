@@ -17,7 +17,6 @@ export const metadata: Metadata = {
   description: '基于 Next.js、Better Auth 与 Neon 的云端留言板',
 }
 
-
 // 根布局：应用全局样式
 export default function RootLayout({
   children,

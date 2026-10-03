@@ -31,7 +31,6 @@
 | [Vercel](https://vercel.com/)                         | 线上部署                                 |
 | pnpm 9                                                | 包管理                                   |
 
-
 ### 数据
 
 数据库是 Neon 上的 PostgreSQL，由 Prisma 访问。数据分两组：
@@ -82,13 +81,13 @@ web-demo-guestbook/
 
 ### 分层职责
 
-| 层级   | 目录                                 | 职责                               |
-| ------ | ------------------------------------ | ---------------------------------- |
-| 表现层 | `app/`、`components/`、`actions/`    | 页面渲染、表单、Server Actions     |
-| 应用层 | `application/`                       | 鉴权、校验、用例编排               |
-| 端口   | `ports/`                             | 定义出站契约（认证、留言）         |
-| 领域层 | `domain/`                            | 实体、Zod Schema、领域错误         |
-| 适配器 | `adapters/`                          | Better Auth、Prisma 等具体技术实现 |
+| 层级   | 目录                              | 职责                               |
+| ------ | --------------------------------- | ---------------------------------- |
+| 表现层 | `app/`、`components/`、`actions/` | 页面渲染、表单、Server Actions     |
+| 应用层 | `application/`                    | 鉴权、校验、用例编排               |
+| 端口   | `ports/`                          | 定义出站契约（认证、留言）         |
+| 领域层 | `domain/`                         | 实体、Zod Schema、领域错误         |
+| 适配器 | `adapters/`                       | Better Auth、Prisma 等具体技术实现 |
 
 ## 快速开始
 

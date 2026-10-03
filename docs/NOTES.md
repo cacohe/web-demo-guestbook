@@ -22,8 +22,6 @@ flowchart LR
   Route --> Data
 ```
 
-
-
 Proxy 在页面渲染之前拦截请求，适合做跳转。通过之后，由 App Router 按 URL 分发：打开页面走 Server Component，提交表单走 Server Action，访问 HTTP 接口走 Route Handler。三者都可以在服务器上接触数据库和密钥。
 
 ### 设计理念
@@ -43,7 +41,7 @@ Proxy 在页面渲染之前拦截请求，适合做跳转。通过之后，由 A
 
 3、渲染模式
 
-- SSG（Static Site Generation），	构建时生成HTML
+- SSG（Static Site Generation）， 构建时生成HTML
 - SSR（Server-Side Rendering），每次请求时生成HTML
 - ISR（Incremental Static Regeneration），构建时 + 按需重新生成HTML
 - CSR（Client-Side Rendering），浏览器运行时生成HTML
@@ -54,23 +52,19 @@ Proxy 在页面渲染之前拦截请求，适合做跳转。通过之后，由 A
 
 - 从请求到路由到客户端，尽可能复用计算结果
 
-
-
 ### 基本组件
 
-
-| 组件               | 作用                                                                                |
-| ---------------- | --------------------------------------------------------------------------------- |
+| 组件             | 作用                                                                                                                           |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | App Router       | `app/` 目录即路由。一个文件夹对应一段 URL，`page.tsx` 是该地址的页面。带括号的目录（如 `(auth)`）只用于分组，不出现在 URL 里。 |
-| Layout           | `layout.tsx` 包裹其子路由，放置全站或某一组页面共用的外壳（字体、标题、外框）。切换子页面时布局保持不变。                       |
-| Server Component | 默认的页面组件，在服务器上执行。可以直接读取数据并生成 HTML，这部分逻辑不会进入浏览器。                                    |
-| Client Component | 标为客户端的组件，在浏览器中运行。负责输入、按钮状态、提交过程中的提示等需要交互的界面。                                      |
-| Server Action    | 在服务器上执行的函数，由表单或客户端组件直接调用。适合登录、发留言这类写入操作，调用方不需要手写 HTTP 请求。                         |
-| Route Handler    | `route.ts` 暴露标准的 HTTP 接口（GET、POST 等）。适合交给认证库、第三方或非页面客户端调用。                        |
-| Loading / Error  | `loading.tsx` 在页面等待数据时显示占位；`error.tsx` 在渲染失败时显示可恢复的错误界面。                          |
+| Layout           | `layout.tsx` 包裹其子路由，放置全站或某一组页面共用的外壳（字体、标题、外框）。切换子页面时布局保持不变。                      |
+| Server Component | 默认的页面组件，在服务器上执行。可以直接读取数据并生成 HTML，这部分逻辑不会进入浏览器。                                        |
+| Client Component | 标为客户端的组件，在浏览器中运行。负责输入、按钮状态、提交过程中的提示等需要交互的界面。                                       |
+| Server Action    | 在服务器上执行的函数，由表单或客户端组件直接调用。适合登录、发留言这类写入操作，调用方不需要手写 HTTP 请求。                   |
+| Route Handler    | `route.ts` 暴露标准的 HTTP 接口（GET、POST 等）。适合交给认证库、第三方或非页面客户端调用。                                    |
+| Loading / Error  | `loading.tsx` 在页面等待数据时显示占位；`error.tsx` 在渲染失败时显示可恢复的错误界面。                                         |
 | Proxy            | `proxy.ts` 在请求进入页面之前运行。本框架用它做路由级判断（例如未登录则跳转），不在这里执行完整业务。                          |
-| 渲染方式             | 不依赖请求的页面可以在构建时生成；依赖登录态、Cookie 或实时查询的页面在每次请求时渲染。写入成功后，可以让相关页面重新取数。                 |
-
+| 渲染方式         | 不依赖请求的页面可以在构建时生成；依赖登录态、Cookie 或实时查询的页面在每次请求时渲染。写入成功后，可以让相关页面重新取数。    |
 
 Server Component 负责“看”，Server Action 和 Route Handler 负责“改”或对外提供 HTTP。客户端组件只保留交互，数据规则留在服务器。
 
@@ -83,14 +77,10 @@ Server Component 负责“看”，Server Action 和 Route Handler 负责“改�
 
 相关的认证服务：
 
-
-| 类型     | 代表                         | 你的数据在哪  | 你需要做什么               |
-| ------ | -------------------------- | ------- | -------------------- |
-| 托管认证服务 | Auth0、Clerk、Firebase Auth  | 厂商的服务器  | 注册账号、拿 API Key、调厂商接口 |
-| 自托管认证库 | Better Auth、Lucia、NextAuth | 你自己的数据库 | 安装库、配置数据库、自己部署       |
-
-
-
+| 类型         | 代表                         | 你的数据在哪   | 你需要做什么                     |
+| ------------ | ---------------------------- | -------------- | -------------------------------- |
+| 托管认证服务 | Auth0、Clerk、Firebase Auth  | 厂商的服务器   | 注册账号、拿 API Key、调厂商接口 |
+| 自托管认证库 | Better Auth、Lucia、NextAuth | 你自己的数据库 | 安装库、配置数据库、自己部署     |
 
 ## 3、Prisma
 
@@ -132,4 +122,3 @@ const prisma = new PrismaClient();
 
 const users = await prisma.user.findMany();
 ```
-
