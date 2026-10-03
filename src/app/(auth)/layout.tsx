@@ -1,3 +1,4 @@
+// 认证布局：统一认证页面的样式
 export default function AuthLayout({
   children,
 }: Readonly<{

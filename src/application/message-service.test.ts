@@ -4,12 +4,17 @@ import {
   UnauthorizedError,
   ValidationError,
 } from '@/domain/errors'
-import type { AuthRepository } from '@/repositories/auth-repository'
-import type { MessageRepository } from '@/repositories/message-repository'
-import { MessageService } from '@/services/message-service'
+import type { AuthPort } from '@/ports/auth-port'
+import type { MessageRepository } from '@/ports/message-repository'
+import { MessageService } from '@/application/message-service'
+
+vi.mock('@/adapters', () => ({
+  authAdapter: {},
+  messageRepository: {},
+}))
 
 describe('MessageService', () => {
-  const auth: AuthRepository = {
+  const auth: AuthPort = {
     getCurrentUser: vi.fn(),
     signInWithPassword: vi.fn(),
     signUp: vi.fn(),

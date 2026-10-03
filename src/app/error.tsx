@@ -1,5 +1,6 @@
-'use client'
+'use client' // 客户端组件
 
+// 错误页面：当页面加载失败时，显示错误信息并提供重试按钮
 export default function Error({
   error,
   reset,

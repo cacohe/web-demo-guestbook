@@ -8,7 +8,7 @@ const { loginMock, signupMock, logoutMock, redirectMock } = vi.hoisted(() => ({
   redirectMock: vi.fn(),
 }))
 
-vi.mock('@/services/auth-service', () => ({
+vi.mock('@/application/auth-service', () => ({
   authService: {
     login: loginMock,
     signup: signupMock,
@@ -38,7 +38,7 @@ describe('auth actions', () => {
   it('redirects to login with error when credentials are invalid', async () => {
     loginMock.mockRejectedValue(new InvalidCredentialsError())
 
-    const { login } = await import('@/app/actions/auth')
+    const { login } = await import('@/actions/auth')
     const formData = new FormData()
     formData.set('email', 'user@example.com')
     formData.set('password', 'wrong-password')
@@ -53,7 +53,7 @@ describe('auth actions', () => {
   it('redirects home after successful login', async () => {
     loginMock.mockResolvedValue(undefined)
 
-    const { login } = await import('@/app/actions/auth')
+    const { login } = await import('@/actions/auth')
     const formData = new FormData()
     formData.set('email', 'user@example.com')
     formData.set('password', 'secret123')
@@ -66,7 +66,7 @@ describe('auth actions', () => {
   it('redirects home after successful signup', async () => {
     signupMock.mockResolvedValue(undefined)
 
-    const { signup } = await import('@/app/actions/auth')
+    const { signup } = await import('@/actions/auth')
     const formData = new FormData()
     formData.set('email', 'new@example.com')
     formData.set('password', 'secret123')
@@ -79,7 +79,7 @@ describe('auth actions', () => {
   it('redirects to signup with error when registration fails', async () => {
     signupMock.mockRejectedValue(new RegistrationError())
 
-    const { signup } = await import('@/app/actions/auth')
+    const { signup } = await import('@/actions/auth')
     const formData = new FormData()
     formData.set('email', 'existing@example.com')
     formData.set('password', 'secret123')
@@ -89,5 +89,16 @@ describe('auth actions', () => {
     expect(redirectMock).toHaveBeenCalledWith(
       `/signup?error=${encodeURIComponent('注册失败，请检查邮箱或密码')}`
     )
+  })
+
+  it('redirects to login after logout', async () => {
+    logoutMock.mockResolvedValue(undefined)
+
+    const { logout } = await import('@/actions/auth')
+
+    await expect(logout()).rejects.toThrow('NEXT_REDIRECT')
+
+    expect(logoutMock).toHaveBeenCalledOnce()
+    expect(redirectMock).toHaveBeenCalledWith('/login')
   })
 })

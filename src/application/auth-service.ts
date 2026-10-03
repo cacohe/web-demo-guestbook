@@ -1,9 +1,9 @@
-import type { AuthRepository } from '@/repositories/auth-repository'
-import { authRepository } from '@/repositories'
+import type { AuthPort } from '@/ports/auth-port'
+import { authAdapter } from '@/adapters'
 
-/** 认证业务逻辑：编排登录、注册、登出，不包含具体 Auth SDK 调用 */
+/** 认证相关的编排器：用于处理认证相关的业务逻辑 */
 export class AuthService {
-  constructor(private readonly auth: AuthRepository = authRepository) {}
+  constructor(private readonly auth: AuthPort = authAdapter) {}
 
   async login(email: string, password: string): Promise<void> {
     await this.auth.signInWithPassword(email, password)

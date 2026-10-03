@@ -1,6 +1,6 @@
 'use server'
 
-import { authService } from '@/services/auth-service'
+import { authService } from '@/application/auth-service'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 
@@ -22,6 +22,7 @@ export async function login(formData: FormData) {
   redirect('/')
 }
 
+/** 注册 Server Action：调用 AuthService，将领域错误转为 URL 参数提示 */
 export async function signup(formData: FormData) {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
@@ -39,6 +40,7 @@ export async function signup(formData: FormData) {
   redirect('/')
 }
 
+/** 登出 Server Action：调用 AuthService，重定向到登录页 */
 export async function logout() {
   await authService.logout()
   redirect('/login')

@@ -1,7 +1,7 @@
 import { PersistenceError } from '@/domain/errors'
 import type { CreateMessageInput, Message } from '@/domain/message'
-import { prisma } from '@/infrastructure/prisma/client'
-import type { MessageRepository } from '@/repositories/message-repository'
+import { prisma } from '@/adapters/db/client'
+import type { MessageRepository } from '@/ports/message-repository'
 import type { Prisma } from '@prisma/client'
 
 type MessageWithUser = Prisma.MessageGetPayload<{
@@ -18,7 +18,7 @@ function toMessage(row: MessageWithUser): Message {
   }
 }
 
-/** 基于 Prisma 的留言仓储，负责与 Neon 数据库交互 */
+/** 基于 Prisma 的留言适配器，负责与 Neon 数据库交互 */
 export class PrismaMessageRepository implements MessageRepository {
   async findAllOrderedByNewest(): Promise<Message[]> {
     try {

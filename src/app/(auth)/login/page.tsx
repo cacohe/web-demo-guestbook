@@ -1,7 +1,7 @@
-import { login } from '@/app/actions/auth'
+import { login } from '@/actions/auth'
 import Link from 'next/link'
 
-// 用户登录页面
+// 用户登录页
 export default async function LoginPage({
   searchParams,
 }: {

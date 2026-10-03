@@ -13,6 +13,7 @@ export type Message = {
   authorName: string
 }
 
+/** 创建留言输入：用于创建留言的领域模型 */
 export type CreateMessageInput = {
   content: string
   userId: string

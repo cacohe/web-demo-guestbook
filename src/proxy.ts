@@ -23,14 +23,17 @@ export function proxy(request: NextRequest) {
   const isAuthPage =
     pathname.startsWith('/login') || pathname.startsWith('/signup')
 
+  // 未登录用户重定向到登录页
   if (!isLoggedIn && !isPublicPath(pathname)) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
+  // 已登录用户不可访问登录/注册页
   if (isLoggedIn && isAuthPage) {
     return NextResponse.redirect(new URL('/', request.url))
   }
 
+  // 允许访问
   return NextResponse.next()
 }
 

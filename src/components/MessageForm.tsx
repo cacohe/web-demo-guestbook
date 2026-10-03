@@ -1,7 +1,7 @@
 'use client'
 
 import { useActionState, useEffect, useRef } from 'react'
-import { addMessage, type MessageActionState } from '@/app/actions/message'
+import { addMessage, type MessageActionState } from '@/actions/message'
 
 const initialState: MessageActionState = {}
 

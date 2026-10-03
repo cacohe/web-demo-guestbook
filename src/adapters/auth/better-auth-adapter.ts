@@ -3,17 +3,17 @@ import {
   PersistenceError,
   RegistrationError,
 } from '@/domain/errors'
-import type { User } from '@/domain/user'
-import { auth, MIN_PASSWORD_LENGTH } from '@/infrastructure/auth/better-auth'
-import type { AuthRepository } from '@/repositories/auth-repository'
+import { MIN_PASSWORD_LENGTH, type User } from '@/domain/user'
+import { auth } from './better-auth'
+import type { AuthPort } from '@/ports/auth-port'
 import { headers } from 'next/headers'
 
 function getNameFromEmail(email: string) {
   return email.split('@')[0] || '用户'
 }
 
-/** 基于 Better Auth 的认证仓储，对业务层屏蔽具体 Auth SDK */
-export class BetterAuthRepository implements AuthRepository {
+/** 基于 Better Auth 的认证适配器，对应用层屏蔽具体 Auth SDK */
+export class BetterAuthAdapter implements AuthPort {
   async getCurrentUser(): Promise<User | null> {
     const session = await auth.api.getSession({
       headers: await headers(),

@@ -1,20 +1,22 @@
 import { UnauthorizedError, ValidationError } from '@/domain/errors'
 import { MessageSchema, type Message } from '@/domain/message'
-import type { AuthRepository } from '@/repositories/auth-repository'
-import type { MessageRepository } from '@/repositories/message-repository'
-import { authRepository, messageRepository } from '@/repositories'
+import type { AuthPort } from '@/ports/auth-port'
+import type { MessageRepository } from '@/ports/message-repository'
+import { authAdapter, messageRepository } from '@/adapters'
 
-/** 留言业务逻辑：鉴权、Zod 校验、调用仓储持久化 */
+/** 留言相关的编排器：用于处理留言相关的业务逻辑 */
 export class MessageService {
   constructor(
     private readonly messages: MessageRepository = messageRepository,
-    private readonly auth: AuthRepository = authRepository
+    private readonly auth: AuthPort = authAdapter
   ) {}
 
+  /** 获取留言列表 */
   async listMessages(): Promise<Message[]> {
     return this.messages.findAllOrderedByNewest()
   }
 
+  /** 创建留言 */
   async createMessage(content: unknown): Promise<void> {
     const user = await this.auth.getCurrentUser()
 

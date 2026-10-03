@@ -1,6 +1,6 @@
 'use server'
 
-import { messageService } from '@/services/message-service'
+import { messageService } from '@/application/message-service'
 import { revalidatePath } from 'next/cache'
 
 export type MessageActionState = {

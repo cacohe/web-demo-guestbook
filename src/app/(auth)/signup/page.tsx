@@ -1,8 +1,8 @@
-import { signup } from '@/app/actions/auth'
-import { MIN_PASSWORD_LENGTH } from '@/infrastructure/auth/better-auth'
+import { signup } from '@/actions/auth'
+import { MIN_PASSWORD_LENGTH } from '@/domain/user'
 import Link from 'next/link'
 
-// 用户注册页面
+// 用户注册页
 export default async function SignupPage({
   searchParams,
 }: {

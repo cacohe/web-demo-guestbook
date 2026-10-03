@@ -1,10 +1,11 @@
 import MessageForm from '@/components/MessageForm'
-import { logout } from '@/app/actions/auth'
-import { messageService } from '@/services/message-service'
+import { logout } from '@/actions/auth'
+import { messageService } from '@/application/message-service'
 
 // 留言数据依赖 Session 与数据库，禁用静态预渲染
 export const dynamic = 'force-dynamic'
 
+// 主页面：展示留言板、表单、留言列表
 export default async function Home() {
   let messages
 

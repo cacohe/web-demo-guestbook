@@ -2,7 +2,7 @@
 
 - **状态：** 功能冻结，只接受文档与保活修复；已实现功能见下一节
 - **Live：** [guestbook-cacohe.vercel.app](https://guestbook-cacohe.vercel.app)
-- **记录：** [学到了什么](docs/LEARNINGS.md) · [决策](docs/DECISIONS.md)
+- **记录：** [笔记](docs/NOTES.md)（Next.js、Better Auth、Prisma 学习笔记）
 - **License：** [MIT](LICENSE)
 
 ## 已实现功能
@@ -31,32 +31,48 @@
 | [Vercel](https://vercel.com/)                         | 线上部署                                 |
 | pnpm 9                                                | 包管理                                   |
 
+
+### 数据
+
+数据库是 Neon 上的 PostgreSQL，由 Prisma 访问。数据分两组：
+
+- **认证**：用户、会话、账号、验证信息。由 Better Auth 使用，用来完成邮箱密码注册、登录和登出。
+- **留言**：内容、作者、创建时间。作者关联到用户；用户删除时，其会话与留言一并删除。
+
+结构以 Prisma schema 同步到数据库（`db push`），仓库中不保留迁移历史。
+
+### 运行环境
+
+- 本地由 Next.js 开发服务器同时提供页面和服务器逻辑，数据库在 Neon。
+- 线上部署在 Vercel，使用同一套环境变量：认证密钥、站点地址、数据库连接串。
+- 提交到主分支时，GitHub Actions 执行格式检查、Lint、类型检查、单元测试和生产构建。
+
 ## 项目结构
 
 ```
 web-demo-guestbook/
 ├── .github/workflows/ci.yml       # CI 流水线
 ├── docs/
-│   ├── LEARNINGS.md               # 做了 / 学到 / 验证了
-│   └── DECISIONS.md               # 架构与范围决策
+│   └── NOTES.md                   # Next.js / Better Auth / Prisma 学习笔记
 ├── prisma/
 │   └── schema.prisma              # 数据模型（User / Session / Message 等）
 ├── public/                        # 静态资源
 ├── src/
-│   ├── app/                       # Next.js 页面与路由
+│   ├── actions/                   # Server Actions（薄层，调用 application）
+│   ├── adapters/                  # 出站适配器
+│   │   ├── auth/                  # 认证端口实现（Better Auth）
+│   │   ├── message/               # 留言端口实现
+│   │   └── db/                    # 共享 Prisma Client
+│   ├── app/                       # Next.js 页面与路由（只含路由）
 │   │   ├── (auth)/                # 认证页（/login、/signup）
-│   │   ├── actions/               # Server Actions（薄层，调用 Service）
 │   │   ├── api/auth/[...all]/     # Better Auth HTTP 端点
 │   │   ├── page.tsx               # 首页留言板
 │   │   ├── loading.tsx            # 加载骨架屏
 │   │   └── error.tsx              # 错误边界
+│   ├── application/               # 用例编排（登录、发留言）
 │   ├── components/                # 客户端组件
 │   ├── domain/                    # 领域模型、校验规则、业务异常
-│   ├── infrastructure/            # 外部依赖实现
-│   │   ├── auth/                  # Better Auth 配置与仓储
-│   │   └── prisma/                # Prisma Client 与留言仓储
-│   ├── repositories/              # 数据访问接口 + 依赖注入
-│   ├── services/                  # 业务逻辑层
+│   ├── ports/                     # 出站端口（认证 / 留言契约）
 │   └── proxy.ts                   # 路由守卫（未登录跳转 /login）
 ├── .env.example                   # 环境变量模板
 ├── LICENSE
@@ -66,13 +82,13 @@ web-demo-guestbook/
 
 ### 分层职责
 
-| 层级     | 目录                  | 职责                               |
-| -------- | --------------------- | ---------------------------------- |
-| 表现层   | `app/`、`components/` | 页面渲染、表单、Server Actions     |
-| 业务层   | `services/`           | 鉴权、校验、业务流程编排           |
-| 接口层   | `repositories/`       | 定义数据访问契约，注入具体实现     |
-| 领域层   | `domain/`             | 实体、Zod Schema、领域错误         |
-| 基础设施 | `infrastructure/`     | Better Auth、Prisma 等具体技术实现 |
+| 层级   | 目录                                 | 职责                               |
+| ------ | ------------------------------------ | ---------------------------------- |
+| 表现层 | `app/`、`components/`、`actions/`    | 页面渲染、表单、Server Actions     |
+| 应用层 | `application/`                       | 鉴权、校验、用例编排               |
+| 端口   | `ports/`                             | 定义出站契约（认证、留言）         |
+| 领域层 | `domain/`                            | 实体、Zod Schema、领域错误         |
+| 适配器 | `adapters/`                          | Better Auth、Prisma 等具体技术实现 |
 
 ## 快速开始
 
